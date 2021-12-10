@@ -7,6 +7,10 @@ public class SynchronizedObservableSet<E> extends ForwardingSet<E> implements Ob
     public SynchronizedObservableSet(Set<E> set) { super(set); }
     private final List<SetObserver<E>> observers = new ArrayList<>();
 
+    public int getNumObservers(){
+        return observers.size();
+    }
+
     @Override
     public void addObserver(SetObserver<E> observer) {
         synchronized (observers) {
@@ -16,13 +20,17 @@ public class SynchronizedObservableSet<E> extends ForwardingSet<E> implements Ob
 
     @Override
     public boolean removeObserver(SetObserver<E> observer) {
+        //System.out.println("r:" + Thread.currentThread().getName());
         synchronized (observers) {
             return observers.remove(observer);
         }
     }
 
     @Override
+    // main -> add(3) -> notify ->  ob2.added -> removeObser(ob2)
+    // StringBuffer(동기화o) -> StringBuilder(동기화x)
     public void notifyElementAdded(E element) {
+        //System.out.println(Thread.currentThread().getName());
         synchronized (observers) {
             for (SetObserver<E> observer : observers)
                 observer.added(this, element);

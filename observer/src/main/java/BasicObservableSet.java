@@ -5,7 +5,11 @@ import java.util.Set;
 
 public class BasicObservableSet<E> extends ForwardingSet<E> implements ObservableSet<E> {
     public BasicObservableSet(Set<E> set) { super(set); }
-    private final List<SetObserver<E>> observers = new ArrayList<>();
+    private final List<SetObserver<E>> observers = new ArrayList();
+
+    public int getNumObservers(){
+        return observers.size();
+    }
 
     public void addObserver(SetObserver<E> observer) {
         observers.add(observer);
@@ -16,8 +20,15 @@ public class BasicObservableSet<E> extends ForwardingSet<E> implements Observabl
     }
 
     public void notifyElementAdded(E element) {
-        for (SetObserver<E> observer : observers)
-            observer.added(this, element);
+          for (SetObserver<E> observer : observers)
+              observer.added(this, element);
+//        // Example 1-2
+//        try {
+//            for (SetObserver<E> observer : observers)
+//                observer.added(this, element);
+//        } catch (Exception e) {
+//            System.out.print(e);
+//        }
     }
 
     @Override public boolean add(E element) {
